@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Welcome to FashionApp</h1>
+    <p>Your clean and modern Spring Boot Web Application.</p>
+
+    <nav>
+        <a href="/" class="btn home-btn">Home</a>
+        <a href="/login" class="btn">Login</a>
+        <a href="/register" class="btn btn-secondary">Register</a>
+    </nav>
+</header>
+
+<!-- ========= LOGIN WRAPPER ======== -->
+<div class="login-wrapper fade-in">
+
+    <div class="login-card fade-in" id="loginCard">
+
+        <h2 class="login-title">Sign In</h2>
+        <p class="login-subtitle">Enter your credentials to access your dashboard.</p>
+
+        <!-- ERROR MESSAGE -->
+        <div class="error-message shake" th:if="${error}">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- LOGOUT SUCCESS MESSAGE -->
+        <div class="success-message" th:if="${param.logout}">
+            <span>You have been logged out.</span>
+        </div>
+
+        <form method="post" action="/login" class="login-form" onsubmit="saveRememberMe()">
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label>Username</label>
+                <input id="loginUsername" type="text" name="username" placeholder="Enter username" required>
+                <div id="loginUsernameSuggestions" class="suggestions"></div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group password-group">
+                <label>Password</label>
+                <input id="loginPassword" type="password" name="password" placeholder="Enter password" required>
+                <span class="eye-icon" onclick="togglePassword('loginPassword')">👁️</span>
+            </div>
+
+            <!-- REMEMBER ME + FORGOT PASSWORD -->
+            <div class="login-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe"> Remember me
+                </label>
+
+                <a href="/forgot-password" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button class="btn btn-login" type="submit">Login</button>
+
+            <!-- SOCIAL LOGIN -->
+            <div class="social-login">
+                <p class="social-text">Or continue with</p>
+
+                <div class="social-buttons">
+                    <button type="button" class="social-btn google-btn">
+                        <span>🔵</span> Continue with Google
+                    </button>
+
+                    <button type="button" class="social-btn apple-btn">
+                        <span></span> Continue with Apple
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <p class="auth-note">
+            Don’t have an account?
+            <a href="/register">Create one</a>
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =================== JAVASCRIPT FEATURES =================== -->
+<script>
+
+    /* SHOW/HIDE PASSWORD */
+    function togglePassword(id) {
+        const field = document.getElementById(id);
+        field.type = field.type === "password" ? "text" : "password";
+    }
+
+    /* USERNAME SUGGESTIONS */
+    const loginUsername = document.getElementById("loginUsername");
+    const loginSuggestions = document.getElementById("loginUsernameSuggestions");
+
+    loginUsername.addEventListener("input", () => {
+        const base = loginUsername.value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        if (base.length < 3) {
+            loginSuggestions.innerHTML = "";
+            return;
+        }
+
+        loginSuggestions.innerHTML = `
+            Suggestions:
+            <strong>${base}_user</strong>,
+            <strong>${base}${Math.floor(Math.random()*90 + 10)}</strong>,
+            <strong>${base}_account</strong>
+        `;
+    });
+
+    /* REMEMBER ME - SAVE USERNAME TO LOCAL STORAGE */
+    function saveRememberMe() {
+        const username = loginUsername.value;
+        const remember = document.getElementById("rememberMe").checked;
+
+        if (remember) {
+            localStorage.setItem("savedUsername", username);
+        } else {
+            localStorage.removeItem("savedUsername");
+        }
+    }
+
+    /* LOAD SAVED USERNAME IF EXISTS */
+    window.addEventListener("load", () => {
+        const saved = localStorage.getItem("savedUsername");
+        if (saved) {
+            loginUsername.value = saved;
+            document.getElementById("rememberMe").checked = true;
+        }
+    });
+
+</script>
+
+</body>
+</html>
+
+
+
+

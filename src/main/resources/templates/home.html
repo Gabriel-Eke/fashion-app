@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionApp - Home</title>
+    <link rel="stylesheet" href="/style.css"> 
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to FashionApp</h1>
+        <p>Your clean and modern Spring Boot Web Application.</p>
+
+        <nav>
+            <a href="/" class="btn home-btn">Home</a>
+            <a href="/login" class="btn">Login</a>
+            <a href="/register" class="btn btn-secondary">Register</a>
+        </nav>
+    </header>
+
+    <!-- LOW STOCK ALERT SECTION -->
+     <div class="alert-box" th:if="${lowStock != null and #lists.size(lowStock) > 0}">
+        <h3>🚨 Low Stock Alerts</h3>
+        <ul>
+            <li th:each="i : ${lowStock}"
+                th:text="$(i.itemName + ' (Qty: ' + i.quantity +')')">
+            </li>
+        </ul>
+     </div>
+
+     <!--- (Optional message when nothing is low stock) -->
+     <div class="alert-box" th:if="${lowStock == null or #lists.size(lowStock) == 0}">
+        <p>All inventory items are sufficiently stocked. 👍</p>
+     </div>
+
+    <div class="container">
+
+        <!-- SECTION #1: ABOUT THE APP -->
+        <h2>About This Project</h2>
+        <p>
+            FashionApp is a full Spring Boot application built using Thymeleaf, MySQL, and real 
+            authentication logic. You will learn how to design a polished web system including:
+            <br><br>
+            ✓ User registration  
+            ✓ User login & authentication  
+            ✓ Dashboard and navigation  
+            ✓ Database integration  
+            ✓ Client & transaction management  
+        </p>
+
+        <br>
+
+        <!-- SECTION #2: FEATURE HIGHLIGHTS -->
+        <h2>Main Features Coming Soon</h2>
+        <ul class="list">
+            <li>✔ User Login & Authentication</li>
+            <li>✔ User Registration</li>
+            <li>✔ Dashboard Overview</li>
+            <li>✔ MySQL Database Storage</li>
+            <li>✔ Design Management Console</li>
+            <li>✔ Client Management</li>
+            <li>✔  Tailoring Transaction Tracking</li>
+        </ul>
+
+        <br>
+
+        <!-- SECTION #3: QUICK LINKS -->
+        <h2>Quick Links</h2>
+        <a href="#" class="btn">View Designs</a>
+        <a href="#" class="btn">Add New Design</a>
+        <a href="#" class="btn btn-secondary">Manage Clients</a>
+        <a href="#" class="btn btn-secondary">Transactions</a>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        © 2025 FashionApp — Built by Gabriel Eke
+    </footer>
+
+</body>
+</html>
+
+

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Operations - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>Daily Operations</h1>
+    <nav>
+        <a href="/" class="btn">Home</a>
+        <a href="/customer-transactions" class="btn btn-secondary">Transactions</a>
+        <a href="/inventory" class="btn">Inventory</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <!-- ===================== SUMMARY ===================== -->
+    <h2 class="transactions-title">Monthly Summary</h2>
+
+    <div class="summary-cards">
+        <div class="summary-card transaction-form">
+            <h3>Income</h3>
+            <p class="summary-amount income-text">
+                $<span th:text="${totalIncome}">0.00</span>
+            </p>
+        </div>
+
+        <div class="summary-card transaction-form">
+            <h3>Expenses</h3>
+            <p class="summary-amount expense-text">
+                $<span th:text="${totalExpense}">0.00</span>
+            </p>
+        </div>
+
+        <div class="summary-card transaction-form">
+            <h3>Net</h3>
+            <p class="summary-amount net-text">
+                $<span th:text="${net}">0.00</span>
+            </p>
+            <p class="summary-subtext">Total Records: <span th:text="${totalCount}">0</span></p>
+        </div>
+    </div>
+
+
+    <!-- ===================== ADD OPERATION (Moved Up) ===================== -->
+    <h2 class="transactions-title">Add New Operation</h2>
+
+    <form method="post" action="/daily-operations" class="transaction-form">
+
+        <label class="filter-label">Date</label>
+        <input type="date" name="operationDate" required>
+
+        <label class="filter-label">Transaction Type</label>
+        <select name="transactionType" required>
+            <option value="">Select Type</option>
+            <option value="INCOME">Income</option>
+            <option value="EXPENSE">Expense</option>
+        </select>
+
+        <label class="filter-label">Amount</label>
+        <input type="number" name="amount" step="0.01" required>
+
+        <label class="filter-label">Category</label>
+        <input type="text" name="category">
+
+        <label class="filter-label">Customer Name</label>
+        <input type="text" name="customerName">
+
+        <label class="filter-label">Description</label>
+        <input type="text" name="description">
+
+        <button class="btn" type="submit">Save Operation</button>
+    </form>
+
+
+    <!-- ===================== FILTERS (Moved Down) ===================== -->
+    <h2 class="transactions-title">Filters</h2>
+
+    <form method="get" action="/daily-operations" class="transaction-form filters-container">
+
+        <label class="filter-label">Specific Date</label>
+        <input type="date" name="date" th:value="${selectedDate}" class="filter-input">
+
+        <label class="filter-label">Category</label>
+        <input type="text" name="category" th:value="${selectedCategory}"
+               placeholder="e.g. Fabric, Rent, Utilities" class="filter-input">
+
+        <label class="filter-label">Transaction Type</label>
+        <select name="transactionType" class="filter-input">
+            <option value="">All</option>
+            <option value="INCOME" th:selected="${selectedType == 'INCOME'}">Income</option>
+            <option value="EXPENSE" th:selected="${selectedType == 'EXPENSE'}">Expense</option>
+        </select>
+
+        <div class="filter-row">
+            <div>
+                <label class="filter-label">Month</label>
+                <select name="month" class="filter-input">
+                    <option th:each="m : ${months}" th:value="${m}" th:text="${m}"
+                            th:selected="${m == selectedMonth}"></option>
+                </select>
+            </div>
+
+            <div>
+                <label class="filter-label">Year</label>
+                <select name="year" class="filter-input">
+                    <option th:each="y : ${years}" th:value="${y}" th:text="${y}"
+                            th:selected="${y == selectedYear}"></option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn filter-btn" type="submit">Apply Filters</button>
+    </form>
+
+
+    <!-- ===================== TABLE ===================== -->
+    <h2 class="transactions-title">Operations List</h2>
+
+    <table class="transaction-table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Customer</th>
+            <th>Description</th>
+            <th>Actions</th>  <!--new-->
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="op : ${operations}">
+            <td th:text="${op.operationDate}"></td>
+            <td th:text="${op.transactionType}"></td>
+            <td>$<span th:text="${op.amount}"></span></td>
+            <td th:text="${op.category}"></td>
+            <td th:text="${op.customerName}"></td>
+            <td th:text="${op.description}"></td>
+
+            <!---NEW EDIT BUTTON-->
+            <td>
+                <a th:href="@{'/daily-operations/edit/' + ${op.id}}" class="btn btn-secondary">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <!-- ===================== CHARTS ===================== -->
+    <h2 class="transactions-title charts-title">Charts</h2>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>Daily Income (Month)</h3>
+            <canvas id="dailyIncomeChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Expenses by Category</h3>
+            <canvas id="expenseCategoryChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ===================== CHART JS ===================== -->
+<script th:inline="javascript">
+    const dailyLabels    = /*[[${dailyLabels}]]*/ [];
+    const dailyIncome    = /*[[${dailyIncomeTotals}]]*/ [];
+    const categoryLabels = /*[[${categoryLabels}]]*/ [];
+    const categoryTotals = /*[[${categoryTotals}]]*/ [];
+
+    new Chart(document.getElementById('dailyIncomeChart'), {
+        type: 'line',
+        data: { labels: dailyLabels, datasets: [{ label: 'Income', data: dailyIncome, tension: .3 }] },
+        options: { scales: { x: { ticks:{color:'#e5e7eb'} }, y:{ ticks:{color:'#e5e7eb'} } } }
+    });
+
+    new Chart(document.getElementById('expenseCategoryChart'), {
+        type: 'pie',
+        data: { labels: categoryLabels, datasets: [{ data: categoryTotals }] }
+    });
+</script>
+
+</body>
+</html>
+

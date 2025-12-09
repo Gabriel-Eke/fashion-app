@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Welcome to FashionApp</h1>
+    <p>Your clean and modern Spring Boot Web Application.</p>
+
+    <nav>
+        <a href="/" class="btn home-btn">Home</a>
+        <a href="/login" class="btn">Login</a>
+        <a href="/register" class="btn btn-secondary">Register</a>
+    </nav>
+</header>
+
+<!-- ===== REGISTER WRAPPER ===== -->
+<div class="login-wrapper fade-in">
+
+    <div class="login-card fade-in">
+
+        <h2 class="login-title">Create Account</h2>
+        <p class="login-subtitle">Join FashionApp and start managing your system.</p>
+
+        <!-- ERROR MESSAGE -->
+        <div class="error-message" th:if="${error}">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- SUCCESS MESSAGE (Matches Forgot Password style) -->
+        <div class="success-message" th:if="${message}">
+            <span th:text="${message}"></span>
+        </div>
+
+        <form method="post" action="/register" class="login-form">
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label>Username</label>
+                <input id="usernameInput" type="text" name="username" placeholder="Choose a username" required>
+                <div id="usernameSuggestions" class="suggestions"></div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group password-group">
+                <label>Password</label>
+                <input id="passwordInput" type="password" name="password" placeholder="Create a password" required>
+                <span class="eye-icon" onclick="togglePassword('passwordInput')">👁️</span>
+                <div id="strengthBar" class="password-strength"></div>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group password-group">
+                <label>Confirm Password</label>
+                <input id="confirmPasswordInput" type="password" placeholder="Re-enter password" required>
+                <span class="eye-icon" onclick="togglePassword('confirmPasswordInput')">👁️</span>
+            </div>
+
+            <button class="btn btn-login" type="submit" onclick="return validatePasswords()">Create Account</button>
+
+            <!-- SOCIAL REGISTER (match login.html) -->
+            <div class="social-login">
+                <p class="social-text">Or sign up with</p>
+
+                <div class="social-buttons">
+                    <button type="button" class="social-btn google-btn">
+                        🔵 Continue with Google
+                    </button>
+
+                    <button type="button" class="social-btn apple-btn">
+                         Continue with Apple
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <p class="auth-note">
+            Already have an account?
+            <a href="/login">Login here</a>
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =================== JAVASCRIPT FEATURES =================== -->
+<script>
+
+    /* SHOW/HIDE PASSWORD */
+    function togglePassword(id) {
+        const field = document.getElementById(id);
+        field.type = field.type === "password" ? "text" : "password";
+    }
+
+    /* PASSWORD STRENGTH METER */
+    const passwordInput = document.getElementById("passwordInput");
+    const strengthBar = document.getElementById("strengthBar");
+
+    passwordInput.addEventListener("input", () => {
+        const value = passwordInput.value;
+
+        if (value.length < 4) {
+            strengthBar.className = "password-strength strength-weak";
+        } else if (value.length < 8) {
+            strengthBar.className = "password-strength strength-medium";
+        } else {
+            strengthBar.className = "password-strength strength-strong";
+        }
+    });
+
+    /* PASSWORD CONFIRM VALIDATION */
+    function validatePasswords() {
+        const password = document.getElementById("passwordInput").value;
+        const confirm = document.getElementById("confirmPasswordInput").value;
+
+        if (password !== confirm) {
+            alert("Passwords do not match.");
+            return false;
+        }
+        return true;
+    }
+
+    /* USERNAME SUGGESTIONS */
+    const usernameInput = document.getElementById("usernameInput");
+    const suggestions = document.getElementById("usernameSuggestions");
+
+    usernameInput.addEventListener("input", () => {
+        const base = usernameInput.value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        if (base.length < 3) {
+            suggestions.innerHTML = "";
+            return;
+        }
+
+        suggestions.innerHTML = `
+            Suggestions:
+            <strong>${base}_123</strong>,
+            <strong>${base}${Math.floor(Math.random()*100)}</strong>,
+            <strong>${base}_official</strong>
+        `;
+    });
+
+</script>
+
+</body>
+</html>
+
+
+

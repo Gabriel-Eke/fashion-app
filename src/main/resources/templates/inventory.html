@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Inventory</h1>
+    <nav>
+        <a href="/" class="btn">Home</a>
+        <a href="/customer-transactions" class="btn btn-secondary">Transactions</a>
+        <a href="/daily-operations" class="btn">Daily Operations</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <!-- ===== Dashboard Cards ===== -->
+    <div class="inventory-dashboard">
+        <div class="card">
+            Total Items: <b th:text="${totalItems}">0</b>
+        </div>
+        <div class="card">
+            Total Quantity: <b th:text="${totalQuantity}">0</b>
+        </div>
+        <div class="card">
+            Inventory Value: $<b th:text="${totalValue}">0.00</b>
+        </div>
+        <div class="card low">
+            Low Stock: <b th:text="${lowStockCount}">0</b>
+        </div>
+        <div class="card danger">
+            Out of Stock: <b th:text="${outOfStockCount}">0</b>
+        </div>
+    </div>
+
+    <!-- ===== Add Item Form ===== -->
+    <section class="form-section">
+        <form th:action="@{/inventory/add}" method="post" th:object="${newItem}" class="form-box">
+            <h2>Add Stock</h2>
+
+            <label>Item Name</label>
+            <input type="text" th:field="*{itemName}" placeholder="Item name" required>
+
+            <label>Material</label>
+            <input type="text" th:field="*{material}" placeholder="e.g., Cotton, Silk">
+
+            <label>Size</label>
+            <input type="text" th:field="*{size}" placeholder="e.g., S, M, L">
+
+            <label>Quantity</label>
+            <input type="number" th:field="*{quantity}" min="1" required>
+
+            <label>Unit Price</label>
+            <input type="number" th:field="*{unitPrice}" step="0.01" min="0" required>
+
+            <label>Barcode (optional)</label>
+            <input type="text" th:field="*{barcode}" placeholder="Scan or type barcode">
+
+            <button type="submit" class="btn">Save</button>
+        </form>
+
+        <!-- Barcode Scan Form -->
+        <form th:action="@{/inventory/scan}" method="get" class="form-box">
+            <h2>Scan Barcode</h2>
+            <input type="text" name="code" placeholder="Scan barcode here" required>
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
+    </section>
+
+    <!-- ===== Inventory Table ===== -->
+    <section class="table-section">
+        <table class="transaction-table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Material</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Status</th>
+                <th>Sell</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.itemName}">Dress</td>
+                <td th:text="${item.material}">Cotton</td>
+                <td th:text="${item.size}">M</td>
+
+                <td th:classappend="${item.lowStock} ? 'low-stock' : ''">
+                    <span th:text="${item.quantity}">0</span>
+                    <span th:if="${item.lowStock}" class="warning">⚠ Low</span>
+                </td>
+
+                <td th:text="${item.unitPrice}">0.00</td>
+
+                <td>
+                    <span th:text="${item.outOfStock} ? 'Out of Stock' : 'In Stock'">In Stock</span>
+                </td>
+
+                <td>
+                    <form th:action="@{/inventory/sell/{id}(id=${item.id})}" method="post" class="sell-form">
+                        <input type="number" name="qty" min="1" placeholder="Qty" style="width:60px;">
+                        <button class="btn-secondary" type="submit"
+                                th:disabled="${item.quantity == 0}">
+                            Sell
+                        </button>
+                    </form>
+                </td>
+
+                <td>
+                    <a th:href="@{/inventory/delete/{id}(id=${item.id})}"
+                       class="table-btn delete-btn"
+                       onclick="return confirm('Delete this item?');">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+</body>
+</html>

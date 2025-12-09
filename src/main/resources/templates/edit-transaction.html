@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Transaction - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Edit Customer Transaction</h1>
+
+    <nav>
+        <a href="/" class="btn">Home</a>
+        <a href="/customer-transactions" class="btn btn-secondary">Back</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <h2 class="transactions-title">Update Transaction</h2>
+
+    <!-- =================== EDIT FORM =================== -->
+    <form method="post"
+          th:action="@{/customer-transactions/edit/{id}(id=${transaction.id})}"
+          class="transaction-form">
+
+        <!-- NAME -->
+        <input type="text"
+               name="name"
+               th:value="${transaction.name}"
+               placeholder="Customer Name"
+               required>
+
+        <!-- PHONE -->
+        <input type="text"
+               name="phoneNumber"
+               th:value="${transaction.phoneNumber}"
+               placeholder="Phone Number"
+               required>
+
+        <!-- EMAIL -->
+        <input type="email"
+               name="email"
+               th:value="${transaction.email}"
+               placeholder="Email"
+               required>
+
+        <!-- CLOTH TYPE -->
+        <input type="text"
+               name="typeOfCloth"
+               th:value="${transaction.typeOfCloth}"
+               list="cloth-types"
+               placeholder="Type of Cloth"
+               required>
+
+        <datalist id="cloth-types">
+            <option value="Shirt">
+            <option value="Dress">
+            <option value="Trouser">
+            <option value="Jacket">
+            <option value="Skirt">
+            <option value="Agbada">
+            <option value="Blouse">
+            <option value="Kaftan">
+            <option value="Native wear">
+        </datalist>
+
+        <!-- COLOR -->
+        <select name="color" required>
+            <option value="">Select Color</option>
+            <option value="White" th:selected="${transaction.color == 'White'}">White</option>
+            <option value="Black" th:selected="${transaction.color == 'Black'}">Black</option>
+            <option value="Blue" th:selected="${transaction.color == 'Blue'}">Blue</option>
+            <option value="Green" th:selected="${transaction.color == 'Green'}">Green</option>
+            <option value="Red" th:selected="${transaction.color == 'Red'}">Red</option>
+            <option value="Pink" th:selected="${transaction.color == 'Pink'}">Pink</option>
+            <option value="Purple" th:selected="${transaction.color == 'Purple'}">Purple</option>
+        </select>
+
+        <!-- MATERIAL -->
+        <input type="text"
+               name="material"
+               th:value="${transaction.material}"
+               list="material-types"
+               placeholder="Material"
+               required>
+
+        <datalist id="material-types">
+            <option value="Cotton">
+            <option value="Wool">
+            <option value="Cashmere">
+            <option value="Silk">
+            <option value="Leather">
+            <option value="Chiffon">
+            <option value="Velvet">
+            <option value="Kente">
+            <option value="Aso Oke">
+            <option value="Adire">
+            <option value="Ankara">
+            <option value="Kitenge">
+            <option value="Silk Brocade">
+            <option value="Khadi">
+            <option value="Batiks">
+        </datalist>
+
+        <!-- QUANTITY -->
+        <input type="number"
+               name="quantity"
+               th:value="${transaction.quantity}"
+               placeholder="Quantity"
+               required>
+
+        <!-- PRICE -->
+        <input type="number"
+               id="purchasePrice"
+               name="purchasePrice"
+               th:value="${transaction.purchasePrice}"
+               placeholder="Purchase Price"
+               required>
+
+        <!-- DEPOSIT -->
+        <input type="number"
+               id="depositeAmount"
+               name="depositeAmount"
+               th:value="${transaction.depositeAmount}"
+               placeholder="Deposit Amount"
+               required>
+
+        <!-- REMAINING (LOCKED) -->
+        <input type="number"
+               id="remainingAmount"
+               name="remainingAmount"
+               th:value="${transaction.remainingAmount}"
+               placeholder="Remaining Amount"
+               readonly>
+
+        <!-- PICKUP DATE -->
+        <input type="datetime-local"
+               name="pickupDateTime"
+               th:value="${transaction.pickupDateTime != null ? transaction.pickupDateTime.toString().substring(0,16) : ''}"
+               required>
+
+        <!-- STATUS -->
+        <select name="status" required>
+            <option value="">Select Status</option>
+            <option value="Pending" th:selected="${transaction.status == 'Pending'}">Pending</option>
+            <option value="In progress" th:selected="${transaction.status == 'In progress'}">In progress</option>
+            <option value="Completed" th:selected="${transaction.status == 'Completed'}">Completed</option>
+            <option value="Collected" th:selected="${transaction.status == 'Collected'}">Collected</option>
+        </select>
+
+        <input type="text" name="note" placeholder="Note" th:value="${transaction.note}" required> <!--new add-->
+
+        <button class="btn" type="submit">Save Changes</button>
+    </form>
+
+</div>
+
+<!-- ===== AUTO CALCULATE REMAINING AMOUNT ===== -->
+<script>
+    const amountInput = document.getElementById("purchasePrice");
+    const depositInput = document.getElementById("depositeAmount");
+    const remainingInput = document.getElementById("remainingAmount");
+
+    function updateRemaining() {
+        let amount = parseFloat(amountInput.value) || 0;
+        let deposit = parseFloat(depositInput.value) || 0;
+        remainingInput.value = (amount - deposit).toFixed(2);
+    }
+
+    amountInput.addEventListener("input", updateRemaining);
+    depositInput.addEventListener("input", updateRemaining);
+
+    // Recalculate on load
+    updateRemaining();
+</script>
+
+</body>
+</html>
+
+
+

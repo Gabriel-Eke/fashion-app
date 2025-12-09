@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan Result - Inventory</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Barcode Search Result</h1>
+    <nav>
+        <a href="/inventory" class="btn">Back to Inventory</a>
+        <a href="/" class="btn btn-secondary">Home</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <div class="form-box">
+        <h2>Scanned Code</h2>
+        <p><b th:text="${barcode}">N/A</b></p>
+    </div>
+
+    <div th:if="${result == null}" class="alert-box">
+        <h3>No Item Found</h3>
+        <p>No inventory item matched this barcode.</p>
+    </div>
+
+    <div th:if="${result != null}">
+        <table class="transaction-table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Material</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${result.itemName}">Dress</td>
+                <td th:text="${result.material}">Cotton</td>
+                <td th:text="${result.size}">M</td>
+                <td th:text="${result.quantity}">0</td>
+                <td th:text="${result.unitPrice}">0.00</td>
+                <td th:text="${result.outOfStock} ? 'Out of Stock' : 'In Stock'">In Stock</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

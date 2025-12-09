@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Info - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Customer Information</h1>
+
+    <nav>
+        <a href="/" class="btn">Home</a>
+        <a href="/customer-transactions" class="btn btn-secondary">Back to Transactions</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <!-- ====== BUTTONS ====== -->
+    <div class="export-buttons">
+        <button class="btn print-btn" onclick="window.print()">🖨 Print</button>
+        <button class="btn pdf-btn" onclick="exportPDF()">📄 Export PDF</button>
+        <button class="btn csv-btn" onclick="exportCSV()">📥 Export CSV</button>
+    </div>
+
+    <!-- BASIC CUSTOMER INFO -->
+    <section id="customer-section" class="transaction-form">
+        <h2>Customer Details</h2>
+
+        <p><strong>Name:</strong> <span th:text="${customer.name}"></span></p>
+        <p><strong>Phone:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+
+        <hr>
+
+        <p><strong>Total Orders:</strong> <span th:text="${totalOrders}"></span></p>
+        <p><strong>Total Amount:</strong> $<span th:text="${totalSpent}"></span></p>
+        <p><strong>Total Deposited:</strong> $<span th:text="${totalDeposited}"></span></p>
+        <p><strong>Total Remaining:</strong> $<span th:text="${totalRemaining}"></span></p>
+    </section>
+
+    <!-- HISTORY LIST -->
+    <h2 class="transactions-title">Transaction History</h2>
+
+    <ul id="historyList" class="list">
+        <li class="transaction-item" th:each="t : ${history}">
+            <div>
+                <span th:text="${#temporals.format(t.addDateTime, 'yyyy-MM-dd HH:mm')}"></span> —
+                <span th:text="${t.typeOfCloth}"></span> —
+                Color: <span th:text="${t.color}"></span> —
+                Qty: <span th:text="${t.quantity}"></span> —
+                $<span th:text="${t.purchasePrice}"></span> —
+                <span th:text="${t.status}"></span>
+            </div>
+
+            <div class="history-pickup">
+                Pickup:
+                <span th:text="${#temporals.format(t.pickupDateTime, 'yyyy-MM-dd HH:mm')}"></span>
+            </div>
+
+            <div class="history-note">
+                Note: <span th:text="${t.note}"></span>
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+
+<!-- ===================== EXPORT SCRIPTS ===================== -->
+<script>
+/* ------------------ EXPORT CSV -------------------- */
+function exportCSV() {
+    const rows = [];
+    const items = document.querySelectorAll("#historyList li");
+
+    rows.push(["Date", "Cloth", "Color", "Qty", "Price", "Status"]);
+
+    items.forEach(li => {
+        const text = li.innerText.split("—").map(t => t.trim());
+        rows.push(text);
+    });
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+            + rows.map(e => e.join(",")).join("\n");
+
+    const link = document.createElement("a");
+    link.href = csvContent;
+    link.download = "customer_history.csv";
+    link.click();
+}
+
+/* ------------------ EXPORT PDF (simple print mode) -------------------- */
+function exportPDF() {
+    window.print();
+}
+</script>
+
+</body>
+</html>
+
+

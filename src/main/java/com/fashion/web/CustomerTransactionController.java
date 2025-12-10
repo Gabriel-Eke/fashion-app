@@ -132,24 +132,16 @@ public class CustomerTransactionController {
         CustomerTransaction customer = service.findByIdAndUser(id, userId);
         if (customer == null) return "redirect:/customer-transactions";
 
-        // 2️⃣ Load ALL history for this customer (same phone)
-        var history = service.getCustomerHistory(userId, id);
 
-        // 3️⃣ Compute totals
-        int totalOrders = history.size();
-        double totalAmount = history.stream()
-                .mapToDouble(CustomerTransaction::getPurchasePrice)
-                .sum();
-        double totalDeposited = history.stream()
-                .mapToDouble(CustomerTransaction::getDepositeAmount)
-                .sum();
-        double totalRemaining = history.stream()
-                .mapToDouble(CustomerTransaction::getRemainingAmount)
-                .sum();
+        // Totals should reflect a single transaction
+        int totalOrders = 1;
+        double totalAmount = customer.getPurchasePrice();
+        double totalDeposited = customer.getDepositeAmount();
+        double totalRemaining = customer.getRemainingAmount();
 
         // 4️⃣ Pass everything to the page
         model.addAttribute("customer", customer);
-        model.addAttribute("history", history);
+        model.addAttribute("history", java.util.List.of(customer));
         model.addAttribute("totalOrders", totalOrders);
         model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("totalDeposited", totalDeposited);

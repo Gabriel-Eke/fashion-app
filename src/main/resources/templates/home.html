@@ -24,7 +24,7 @@
         <h3>🚨 Low Stock Alerts</h3>
         <ul>
             <li th:each="i : ${lowStock}"
-                th:text="$(i.itemName + ' (Qty: ' + i.quantity +')')">
+                th:text="${i.itemName + ' (Qty: ' + i.quantity +')'}">
             </li>
         </ul>
      </div>

@@ -1,5 +1,7 @@
 package com.fashion.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -23,13 +25,26 @@ public class User {
     @Column(nullable = false, length = 20)
     private String role = "USER";   // default role
 
+    // ⭐ New: Subscription Status (ACTIVE OR INACTIVE)
+    @Column(nullable = false, length = 20)
+    private String SubscriptionStatus = "INACTIVE";   // Default: no subscription
+
+    // ⭐ NEW: Subscription Plan (basic, pro, etc.)
+    @Column(length = 50)
+    private String subscriptionPlan;
+
+    // ⭐ NEW: Subscription Expiration Date
+    @Column
+    private LocalDate subscriptionEndDate;
+
     public User() {}
 
     public User(String username, String email, String passwordHash) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = "USER"; // default for new registrations
+        this.role = "USER"; 
+        this.SubscriptionStatus = "INACTIVE";   // default for new registrations
     }
 
     // ==========================
@@ -60,6 +75,28 @@ public class User {
         return role;
     }
     public void setRole(String role) { this.role = role; }
+
+    // ⭐ Subscription getters/setters
+    public String getSubscriptionStatus() {
+        return SubscriptionStatus;
+    }
+    public void setSubscriptionStatus(String subscriptionStatus) {
+        this.SubscriptionStatus = subscriptionStatus;
+    }
+
+    public String getSubscriptionPlan() {
+        return subscriptionPlan;
+    }
+    public void setSubscriptionPlan(String subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan;
+    }
+
+    public LocalDate getSubscriptionEndDate() {
+        return subscriptionEndDate;
+    }
+    public void setSubscriptionEndDate(LocalDate subscriptionEndDate) {
+        this.subscriptionEndDate = subscriptionEndDate;
+    }
 }
 
 

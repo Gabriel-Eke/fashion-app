@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Canceled - FashionApp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>❌ Payment Canceled</h1>
+    <p>Your subscription process was not completed.</p>
+
+    <nav>
+        <a href="/" class="btn">Home</a>
+        <a href="/subscribe" class="btn btn-secondary">Try Again</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="transactions-wrapper">
+
+    <div class="cancel-box">
+        <h2>Payment Not Completed</h2>
+        <p>No charges were made. You can retry your subscription anytime.</p>
+
+        <div class="spacing"></div>
+
+        <a href="/subscribe" class="btn subscribe-btn">Choose Plan</a>
+    </div>
+
+</div>
+
+</body>
+</html>

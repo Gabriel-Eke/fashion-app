@@ -52,6 +52,15 @@ public class AuthController {
         String role = userService.getRoleByUserId(userId);
         session.setAttribute("role", role);
 
+        // ⭐ NEW - Check subscription status
+        String subscriptionStatus = userService.getSubscriptionStatus(userId);
+
+        // If no active subscription -> redirect to pricing page
+        if (subscriptionStatus == null || !subscriptionStatus.equals("ACTIVE")) {
+            return "redirect:/subscribe";
+        }
+
+        // If subscription is Active -> redirect to dashboard
         return "redirect:/customer-transactions";
     }
 

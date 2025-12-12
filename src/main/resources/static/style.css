@@ -781,6 +781,98 @@ header nav .btn {
 }
 
 
+/* =============================================
+   PRICING PAGE STYLING
+================================================ */
+.pricing-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.plan-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.plan-card:hover {
+    transform: translateY(-6px);
+}
+
+.plan-card h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.price {
+    font-size: 30px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.price span {
+    font-size: 16px;
+    color: #444;
+}
+
+.features {
+    list-style: none;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.features li {
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.subscribe-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+/* =============================================
+   SUCCESS AND CANCEL HTML
+================================================ */
+.success-box, .cancel-box {
+    background: #fff;
+    padding: 28px;
+    max-width: 450px;
+    margin: 40px auto;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+
+.success-box h2 {
+    color: #16a34a; /* green */
+    margin-bottom: 12px;
+}
+
+.cancel-box h2 {
+    color: #dc2626; /* red */
+    margin-bottom: 12px;
+}
+
+.spacing {
+    margin-top: 20px;
+}
+
+
+
+
 
 
 

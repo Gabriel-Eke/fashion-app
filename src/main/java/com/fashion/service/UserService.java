@@ -5,6 +5,7 @@ import com.fashion.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -107,6 +108,54 @@ public class UserService {
 
         return user.getRole();
     }
+
+    // ======================================================
+    // ⭐ NEW: SUBSCRIPTION STATUS CHECK
+    // ======================================================
+    public String getSubscriptionStatus(Long userId) {
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isEmpty()) {
+            return "INACTIVE";
+        }
+
+        User user = optionalUser.get();
+
+        // If no subscription assigned → treat as INACTIVE
+        if (user.getSubscriptionStatus() == null) {
+            return "INACTIVE";
+        }
+
+        // If subscription expired → mark inactive
+        if (user.getSubscriptionEndDate() != null &&
+            user.getSubscriptionEndDate().isBefore(LocalDate.now())) {
+
+            user.setSubscriptionStatus("INACTIVE");
+            userRepository.save(user);
+        }
+
+        return user.getSubscriptionStatus();
+    }
+
+    // ======================================================
+    // ⭐ NEW: ACTIVATE SUBSCRIPTION (Used after Stripe Payment)
+    // ======================================================
+    public void activateSubscription(Long userId, String plan, int months) {
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            user.setSubscriptionStatus("ACTIVE");
+            user.setSubscriptionPlan(plan);
+            user.setSubscriptionEndDate(LocalDate.now().plusMonths(months));
+
+            userRepository.save(user);
+        }
+    }
+
 }
 
 
